@@ -3,31 +3,21 @@ import Head from 'next/head';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 
-const UsersPage: React.FC = () => {
-  // Mock data for demonstration
-  const users = [
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      role: 'Admin',
-      joinDate: '2023-01-15',
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      role: 'User',
-      joinDate: '2023-02-20',
-    },
-    {
-      id: 3,
-      name: 'Mike Johnson',
-      email: 'mike.johnson@example.com',
-      role: 'Moderator',
-      joinDate: '2023-03-10',
-    },
-  ];
+interface ApiUser {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const UsersPage: React.FC<{ posts: ApiUser[] }> = ({ posts }) => {
+  // Use the fetched data from getStaticProps
+  const users = posts.map((user: ApiUser) => ({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.id <= 3 ? 'Admin' : user.id <= 6 ? 'Moderator' : 'User', // Assign roles based on ID
+    joinDate: '2023-01-15', // Default date since API doesn't provide this
+  }));
 
   const handleEditUser = (id: number) => {
     console.log(`Edit user with id: ${id}`);
@@ -137,5 +127,16 @@ const UsersPage: React.FC = () => {
     </>
   );
 };
+
+export async function getStaticProps() {
+  const response = await fetch("https://jsonplaceholder.typicode.com/users")
+  const posts = await response.json()
+
+  return {
+    props: {
+      posts
+    }
+  }
+}
 
 export default UsersPage;
