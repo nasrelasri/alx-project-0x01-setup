@@ -5,6 +5,16 @@ export interface PostProps {
     body: string;
   }
 
+export interface UserProps {
+  id: number;
+  name: string;
+  email: string;
+  role: 'Admin' | 'Moderator' | 'User';
+  joinDate: string;
+  avatar?: string;
+  isOnline?: boolean;
+}
+
   export interface Welcome {
     id:       number;
     name:     string;

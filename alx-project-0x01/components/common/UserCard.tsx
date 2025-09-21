@@ -1,14 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
+import { UserProps } from '../../interfaces';
 
-interface UserCardProps {
-  id: number;
-  name: string;
-  email: string;
-  role: 'Admin' | 'Moderator' | 'User';
-  joinDate: string;
-  avatar?: string;
-  isOnline?: boolean;
+interface UserCardProps extends UserProps {
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
   onViewProfile?: (id: number) => void;

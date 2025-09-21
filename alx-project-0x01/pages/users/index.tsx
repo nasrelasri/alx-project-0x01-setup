@@ -2,6 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
+import UserCard from '../../components/common/UserCard';
 
 interface ApiUser {
   id: number;
@@ -9,14 +10,14 @@ interface ApiUser {
   email: string;
 }
 
-const UsersPage: React.FC<{ posts: ApiUser[] }> = ({ posts }) => {
+const Users: React.FC<{ posts: ApiUser[] }> = ({ posts }) => {
   // Use the fetched data from getStaticProps
   const users = posts.map((user: ApiUser) => ({
     id: user.id,
     name: user.name,
     email: user.email,
-    role: user.id <= 3 ? 'Admin' : user.id <= 6 ? 'Moderator' : 'User', // Assign roles based on ID
-    joinDate: '2023-01-15', // Default date since API doesn't provide this
+    role: (user.id <= 3 ? 'Admin' : user.id <= 6 ? 'Moderator' : 'User') as 'Admin' | 'Moderator' | 'User',
+    joinDate: '2023-01-15',
   }));
 
   const handleEditUser = (id: number) => {
@@ -45,74 +46,15 @@ const UsersPage: React.FC<{ posts: ApiUser[] }> = ({ posts }) => {
             <p className="text-gray-600">Manage your application users</p>
           </div>
           
-          <div className="bg-white shadow-sm rounded-lg overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Email
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Role
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Join Date
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {users.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {user.name}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {user.email}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          user.role === 'Admin' 
-                            ? 'bg-red-100 text-red-800'
-                            : user.role === 'Moderator'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-green-100 text-green-800'
-                        }`}>
-                          {user.role}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {new Date(user.joinDate).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                          onClick={() => handleEditUser(user.id)}
-                          className="text-blue-600 hover:text-blue-900 mr-4"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteUser(user.id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {users.map((user) => (
+              <UserCard
+                key={user.id}
+                {...user}
+                onEdit={handleEditUser}
+                onDelete={handleDeleteUser}
+              />
+            ))}
           </div>
           
           {users.length === 0 && (
@@ -139,4 +81,4 @@ export async function getStaticProps() {
   }
 }
 
-export default UsersPage;
+export default Users;
