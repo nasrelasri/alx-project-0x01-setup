@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Head from 'next/head';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import UserCard from '../../components/common/UserCard';
+import UserModal from '../../components/common/UserModal';
+import { UserProps } from '../../interfaces';
 
 interface ApiUser {
   id: number;
@@ -11,23 +13,23 @@ interface ApiUser {
 }
 
 const Users: React.FC<{ posts: ApiUser[] }> = ({ posts }) => {
-  // Use the fetched data from getStaticProps
-  const users = posts.map((user: ApiUser) => ({
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    role: (user.id <= 3 ? 'Admin' : user.id <= 6 ? 'Moderator' : 'User') as 'Admin' | 'Moderator' | 'User',
-    joinDate: '2023-01-15',
-  }));
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [users, setUsers] = useState(() => 
+    posts.map((user: ApiUser) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: (user.id <= 3 ? 'Admin' : user.id <= 6 ? 'Moderator' : 'User') as 'Admin' | 'Moderator' | 'User',
+      joinDate: '2023-01-15',
+    }))
+  );
 
-  const handleEditUser = (id: number) => {
-    console.log(`Edit user with id: ${id}`);
-    // Implement edit functionality
-  };
-
-  const handleDeleteUser = (id: number) => {
-    console.log(`Delete user with id: ${id}`);
-    // Implement delete functionality
+  const handleAddUser = (newUser: Omit<UserProps, 'id'>) => {
+    const user: UserProps = {
+      ...newUser,
+      id: Math.max(...users.map(u => u.id)) + 1,
+    };
+    setUsers(prev => [...prev, user]);
   };
 
   return (
@@ -42,8 +44,21 @@ const Users: React.FC<{ posts: ApiUser[] }> = ({ posts }) => {
         
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Users</h1>
-            <p className="text-gray-600">Manage your application users</p>
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Users</h1>
+                <p className="text-gray-600">Manage your application users</p>
+              </div>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <span>Add User</span>
+              </button>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -51,8 +66,6 @@ const Users: React.FC<{ posts: ApiUser[] }> = ({ posts }) => {
               <UserCard
                 key={user.id}
                 {...user}
-                onEdit={handleEditUser}
-                onDelete={handleDeleteUser}
               />
             ))}
           </div>
@@ -66,6 +79,14 @@ const Users: React.FC<{ posts: ApiUser[] }> = ({ posts }) => {
         
         <Footer />
       </div>
+
+      {/* User Modal */}
+      <UserModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleAddUser}
+        mode="create"
+      />
     </>
   );
 };
