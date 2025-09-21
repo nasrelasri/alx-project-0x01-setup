@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 interface FooterProps {
   companyName?: string;
@@ -26,19 +27,19 @@ const Footer: React.FC<FooterProps> = ({
             <h4 className="text-sm font-semibold text-gray-900 mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="/" className="text-gray-600 hover:text-blue-600 text-sm transition-colors">
+                <Link href="/" className="text-gray-600 hover:text-blue-600 text-sm transition-colors">
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/posts" className="text-gray-600 hover:text-blue-600 text-sm transition-colors">
+                <Link href="/posts" className="text-gray-600 hover:text-blue-600 text-sm transition-colors">
                   Posts
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/users" className="text-gray-600 hover:text-blue-600 text-sm transition-colors">
+                <Link href="/users" className="text-gray-600 hover:text-blue-600 text-sm transition-colors">
                   Users
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
